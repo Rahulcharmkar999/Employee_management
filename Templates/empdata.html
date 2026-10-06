@@ -1,0 +1,462 @@
+{% extends 'base.html' %}
+
+{% block title %}Employee Data{% endblock %}
+
+{% block content %}
+
+<style>
+    .employee-page {
+        padding: 30px 0;
+    }
+
+    .page-header {
+        background: linear-gradient(135deg, #0d6efd, #0b5ed7);
+        color: white;
+        border-radius: 16px;
+        padding: 25px 30px;
+        margin-bottom: 25px;
+        box-shadow: 0 8px 25px rgba(13, 110, 253, 0.18);
+    }
+
+    .page-header h2 {
+        margin: 0;
+        font-weight: 700;
+    }
+
+    .page-header p {
+        margin: 6px 0 0;
+        opacity: 0.9;
+    }
+
+    .header-actions {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+
+    .add-btn {
+        background: white;
+        color: #0d6efd;
+        border: none;
+        padding: 10px 18px;
+        border-radius: 8px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: 0.3s;
+    }
+
+    .add-btn:hover {
+        background: #f1f5ff;
+        color: #0b5ed7;
+        transform: translateY(-2px);
+    }
+
+    .table-card {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+    }
+
+    .table-top {
+        padding: 18px 20px;
+        border-bottom: 1px solid #eee;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+
+    .employee-count {
+        font-weight: 600;
+        color: #333;
+    }
+
+    .search-box {
+        position: relative;
+        width: 300px;
+    }
+
+    .search-box i {
+        position: absolute;
+        left: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #777;
+    }
+
+    .search-box input {
+        width: 100%;
+        padding: 10px 12px 10px 38px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        outline: none;
+        transition: 0.3s;
+    }
+
+    .search-box input:focus {
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.1);
+    }
+
+    .table-responsive {
+        overflow-x: auto;
+    }
+
+    .employee-table {
+        width: 100%;
+        min-width: 1100px;
+        border-collapse: collapse;
+    }
+
+    .employee-table thead {
+        background: #f8f9fa;
+    }
+
+    .employee-table th {
+        padding: 15px;
+        text-align: left;
+        font-size: 14px;
+        color: #555;
+        font-weight: 700;
+        white-space: nowrap;
+        border-bottom: 2px solid #e9ecef;
+    }
+
+    .employee-table td {
+        padding: 14px 15px;
+        border-bottom: 1px solid #eee;
+        color: #444;
+        vertical-align: middle;
+    }
+
+    .employee-table tbody tr {
+        transition: 0.2s;
+    }
+
+    .employee-table tbody tr:hover {
+        background: #f8fbff;
+    }
+
+    .id-badge {
+        background: #e9f2ff;
+        color: #0d6efd;
+        padding: 5px 9px;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 13px;
+    }
+
+    .name-cell {
+        font-weight: 600;
+        color: #222;
+    }
+
+    .salary {
+        font-weight: 600;
+        color: #198754;
+    }
+
+    .department-badge,
+    .company-badge {
+        display: inline-block;
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        background: #f1f3f5;
+        color: #495057;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 7px;
+    }
+
+    .action-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 7px 11px;
+        border-radius: 7px;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 600;
+        transition: 0.3s;
+        border: none;
+        cursor: pointer;
+    }
+
+    .update-btn {
+        background: #e8f5e9;
+        color: #198754;
+    }
+
+    .update-btn:hover {
+        background: #198754;
+        color: white;
+    }
+
+    .delete-btn {
+        background: #fdecec;
+        color: #dc3545;
+    }
+
+    .delete-btn:hover {
+        background: #dc3545;
+        color: white;
+    }
+
+    .empty-row {
+        text-align: center !important;
+        padding: 45px !important;
+        color: #777;
+    }
+
+    .empty-row i {
+        font-size: 40px;
+        display: block;
+        margin-bottom: 10px;
+        color: #adb5bd;
+    }
+
+    @media (max-width: 768px) {
+        .employee-page {
+            padding: 20px 0;
+        }
+
+        .page-header {
+            padding: 20px;
+        }
+
+        .search-box {
+            width: 100%;
+        }
+
+        .table-top {
+            align-items: stretch;
+        }
+    }
+</style>
+
+
+<div class="container employee-page">
+
+    <!-- Page Header -->
+    <div class="page-header">
+
+        <div class="header-actions">
+
+            <div>
+                <h2>
+                    <i class="bi bi-people-fill"></i>
+                    Employee Data
+                </h2>
+
+                <p>
+                    Manage and view all employee information
+                </p>
+            </div>
+
+            <a href="{% url 'add_employee' %}" class="add-btn">
+                <i class="bi bi-person-plus-fill"></i>
+                Add Employee
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- Employee Table Card -->
+    <div class="table-card">
+
+        <div class="table-top">
+
+            <div class="employee-count">
+                <i class="bi bi-database"></i>
+                Total Employees:
+                <span id="employeeCount">{{ employeedata|length }}</span>
+            </div>
+
+            <div class="search-box">
+                <i class="bi bi-search"></i>
+
+                <input
+                    type="text"
+                    id="searchEmployee"
+                    placeholder="Search employee..."
+                    onkeyup="searchEmployee()"
+                >
+            </div>
+
+        </div>
+
+
+        <div class="table-responsive">
+
+            <table class="employee-table">
+
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Age</th>
+                        <th>Salary</th>
+                        <th>Department</th>
+                        <th>Address</th>
+                        <th>Company</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+
+                <tbody id="employeeTable">
+
+                    {% for employee in employeedata %}
+
+                    <tr>
+
+                        <td>
+                            <span class="id-badge">
+                                #{{ employee.id }}
+                            </span>
+                        </td>
+
+                        <td class="name-cell">
+                            {{ employee.name }}
+                        </td>
+
+                        <td>
+                            {{ employee.emails }}
+                        </td>
+
+                        <td>
+                            {{ employee.age }}
+                        </td>
+
+                        <td class="salary">
+                            ₹ {{ employee.salary }}
+                        </td>
+
+                        <td>
+                            <span class="department-badge">
+                                {{ employee.department|default:"Not Assigned" }}
+                            </span>
+                        </td>
+
+                        <td>
+                            {{ employee.address }}
+                        </td>
+
+                        <td>
+                            <span class="company-badge">
+                                {{ employee.company|default:"Not Assigned" }}
+                            </span>
+                        </td>
+
+                        <td>
+
+                            <div class="action-buttons">
+
+                                <a
+                                    href="{% url 'update_employee' employee.id %}"
+                                    class="action-btn update-btn"
+                                >
+                                    <i class="bi bi-pencil-square"></i>
+                                    Update
+                                </a>
+
+
+                                <a
+                                    href="{% url 'delete_employee' employee.id %}"
+                                    class="action-btn delete-btn"
+                                    onclick="return confirmDelete('{{ employee.name }}');"
+                                >
+                                    <i class="bi bi-trash3"></i>
+                                    Delete
+                                </a>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                    {% empty %}
+
+                    <tr>
+                        <td colspan="9" class="empty-row">
+
+                            <i class="bi bi-person-x"></i>
+
+                            <strong>No Employee Data Found</strong>
+
+                            <br>
+
+                            <small>
+                                Add your first employee to see the data here.
+                            </small>
+
+                        </td>
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    // Search Employee
+    function searchEmployee() {
+
+        let input = document
+            .getElementById("searchEmployee")
+            .value
+            .toLowerCase();
+
+        let rows = document
+            .querySelectorAll("#employeeTable tr");
+
+        rows.forEach(function(row) {
+
+            let text = row.innerText.toLowerCase();
+
+            if (text.includes(input)) {
+                row.style.display = "";
+            } else {
+                row.style.display = "none";
+            }
+
+        });
+
+    }
+
+
+    // Delete Confirmation
+    function confirmDelete(name) {
+
+        return confirm(
+            "Are you sure you want to delete " +
+            name +
+            "?\n\nThis action cannot be undone."
+        );
+
+    }
+
+</script>
+
+{% endblock %}

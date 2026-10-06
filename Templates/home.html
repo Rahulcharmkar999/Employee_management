@@ -1,0 +1,352 @@
+{% extends 'base.html' %}
+
+{% block title %}Home | Employee Management{% endblock %}
+
+{% block content %}
+
+<style>
+    .home-page { padding: 10px 0 30px; }
+
+    /* ---------- Hero ---------- */
+    .hero {
+        background: linear-gradient(135deg, #0d6efd, #0b5ed7);
+        color: #fff;
+        border-radius: 20px;
+        padding: 50px 30px;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(13, 110, 253, 0.2);
+        margin-bottom: 30px;
+    }
+
+    .hero h1 { font-weight: 800; margin-bottom: 10px; }
+    .hero .greeting { opacity: 0.9; font-size: 18px; margin-bottom: 6px; }
+    .hero .tagline { font-size: 18px; opacity: 0.9; margin-bottom: 26px; }
+
+    .hero-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 24px;
+        border-radius: 10px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: 0.3s;
+        margin: 5px;
+    }
+
+    .hero-btn.primary { background: #fff; color: #0d6efd; }
+    .hero-btn.primary:hover { background: #f1f5ff; transform: translateY(-3px); }
+
+    .hero-btn.outline { border: 2px solid #fff; color: #fff; }
+    .hero-btn.outline:hover { background: #fff; color: #0d6efd; transform: translateY(-3px); }
+
+    /* ---------- Stat cards ---------- */
+    .stat-card {
+        background: #fff;
+        border-radius: 16px;
+        padding: 24px;
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.07);
+        height: 100%;
+    }
+
+    .stat-icon {
+        width: 58px;
+        height: 58px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 26px;
+        flex-shrink: 0;
+    }
+
+    .stat-icon.blue  { background: #e9f2ff; color: #0d6efd; }
+    .stat-icon.green { background: #e8f5e9; color: #198754; }
+    .stat-icon.amber { background: #fff4e0; color: #fd7e14; }
+
+    .stat-number { font-size: 32px; font-weight: 800; color: #222; line-height: 1; }
+    .stat-label  { color: #777; font-weight: 600; margin-top: 4px; }
+
+    /* ---------- Recent employees ---------- */
+    .recent-card {
+        background: #fff;
+        border-radius: 16px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.07);
+        overflow: hidden;
+        margin-top: 30px;
+    }
+
+    .recent-head {
+        padding: 18px 22px;
+        border-bottom: 1px solid #eee;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .recent-head h5 { margin: 0; font-weight: 700; }
+
+    .recent-table { width: 100%; border-collapse: collapse; }
+    .recent-table th {
+        padding: 12px 22px;
+        text-align: left;
+        font-size: 13px;
+        color: #666;
+        background: #f8f9fa;
+    }
+    .recent-table td { padding: 13px 22px; border-top: 1px solid #f0f0f0; color: #444; }
+    .recent-table tr:hover td { background: #f8fbff; }
+
+    .avatar {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background: #0d6efd;
+        color: #fff;
+        font-weight: 700;
+        font-size: 14px;
+        margin-right: 10px;
+    }
+
+    .pill {
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        background: #f1f3f5;
+        color: #495057;
+    }
+
+    .recent-empty { text-align: center; padding: 40px; color: #777; }
+    .recent-empty i { font-size: 38px; display: block; color: #adb5bd; margin-bottom: 8px; }
+
+    /* ---------- Feature cards ---------- */
+    .feature-card {
+        background: #fff;
+        border-radius: 16px;
+        padding: 28px 22px;
+        text-align: center;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.07);
+        height: 100%;
+        transition: 0.3s;
+    }
+
+    .feature-card:hover { transform: translateY(-6px); box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1); }
+    .feature-card i { font-size: 38px; }
+    .feature-card h5 { margin: 14px 0 8px; font-weight: 700; }
+    .feature-card p { color: #777; margin: 0; }
+
+    /* ---------- Scroll animation ---------- */
+    .reveal { opacity: 0; transform: translateY(24px); transition: 0.6s ease; }
+    .reveal.show { opacity: 1; transform: none; }
+
+    @media (prefers-reduced-motion: reduce) {
+        .reveal { opacity: 1; transform: none; transition: none; }
+    }
+
+    @media (max-width: 768px) {
+        .hero { padding: 35px 18px; }
+        .hero h1 { font-size: 26px; }
+        .recent-table th, .recent-table td { padding: 10px 12px; }
+    }
+</style>
+
+
+<div class="container home-page">
+
+    <!-- Hero -->
+    <div class="hero">
+        <div class="greeting" id="greeting">Welcome</div>
+        <h1><i class="bi bi-people-fill"></i> Employee Management System</h1>
+        <p class="tagline">Add, update and manage all your employee records in one place.</p>
+
+        <a href="{% url 'display' %}" class="hero-btn primary">
+            <i class="bi bi-people"></i> View Employees
+        </a>
+        <a href="{% url 'add_employee' %}" class="hero-btn outline">
+            <i class="bi bi-person-plus-fill"></i> Add Employee
+        </a>
+    </div>
+
+
+    <!-- Live stats -->
+    <div class="row g-4">
+
+        <div class="col-md-4 reveal">
+            <div class="stat-card">
+                <div class="stat-icon blue"><i class="bi bi-people-fill"></i></div>
+                <div>
+                    <div class="stat-number"><span class="counter" data-target="{{ total_employees|default:0 }}">0</span></div>
+                    <div class="stat-label">Total Employees</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 reveal">
+            <div class="stat-card">
+                <div class="stat-icon green"><i class="bi bi-building"></i></div>
+                <div>
+                    <div class="stat-number"><span class="counter" data-target="{{ total_companies|default:0 }}">0</span></div>
+                    <div class="stat-label">Companies</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 reveal">
+            <div class="stat-card">
+                <div class="stat-icon amber"><i class="bi bi-diagram-3-fill"></i></div>
+                <div>
+                    <div class="stat-number"><span class="counter" data-target="{{ total_departments|default:0 }}">0</span></div>
+                    <div class="stat-label">Departments</div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- Recently added employees -->
+    <div class="recent-card reveal">
+
+        <div class="recent-head">
+            <h5><i class="bi bi-clock-history"></i> Recently Added</h5>
+            <a href="{% url 'display' %}" class="btn btn-sm btn-outline-primary">View all</a>
+        </div>
+
+        {% if recent_employees %}
+        <div style="overflow-x: auto;">
+            <table class="recent-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Department</th>
+                        <th>Company</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for e in recent_employees %}
+                    <tr>
+                        <td>
+                            <span class="avatar">{{ e.name|slice:":1"|upper }}</span>{{ e.name }}
+                        </td>
+                        <td><span class="pill">{{ e.department|default:"Not Assigned" }}</span></td>
+                        <td><span class="pill">{{ e.company|default:"Not Assigned" }}</span></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="recent-empty">
+            <i class="bi bi-person-x"></i>
+            No employees yet. <a href="{% url 'add_employee' %}">Add the first one</a>.
+        </div>
+        {% endif %}
+
+    </div>
+
+
+    <!-- Features -->
+    <div class="row g-4 mt-1">
+
+        <div class="col-md-4 reveal">
+            <div class="feature-card">
+                <i class="bi bi-person-plus-fill text-primary"></i>
+                <h5>Add Employees</h5>
+                <p>Save name, email, age, salary, company and department.</p>
+            </div>
+        </div>
+
+        <div class="col-md-4 reveal">
+            <div class="feature-card">
+                <i class="bi bi-search text-success"></i>
+                <h5>View &amp; Search</h5>
+                <p>See every record in one table and find anyone quickly.</p>
+            </div>
+        </div>
+
+        <div class="col-md-4 reveal">
+            <div class="feature-card">
+                <i class="bi bi-pencil-square text-danger"></i>
+                <h5>Update &amp; Delete</h5>
+                <p>Edit details or remove an employee whenever needed.</p>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+    // 1. Greeting based on the visitor's local time
+    (function () {
+        var hour = new Date().getHours();
+        var text = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
+        document.getElementById("greeting").textContent = text + "! 👋";
+    })();
+
+
+    // 2. Count-up animation for the stat numbers
+    (function () {
+        var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+        document.querySelectorAll(".counter").forEach(function (el) {
+            var target = parseInt(el.dataset.target, 10) || 0;
+
+            if (reduce || target === 0) {
+                el.textContent = target;
+                return;
+            }
+
+            var duration = 1000;
+            var start = null;
+
+            function step(timestamp) {
+                if (!start) start = timestamp;
+                var progress = Math.min((timestamp - start) / duration, 1);
+                el.textContent = Math.floor(progress * target);
+                if (progress < 1) {
+                    requestAnimationFrame(step);
+                } else {
+                    el.textContent = target;
+                }
+            }
+
+            requestAnimationFrame(step);
+        });
+    })();
+
+
+    // 3. Fade-in when cards scroll into view
+    (function () {
+        var items = document.querySelectorAll(".reveal");
+
+        if (!("IntersectionObserver" in window)) {
+            items.forEach(function (el) { el.classList.add("show"); });
+            return;
+        }
+
+        var observer = new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add("show");
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.15 });
+
+        items.forEach(function (el) { observer.observe(el); });
+    })();
+</script>
+
+{% endblock %}

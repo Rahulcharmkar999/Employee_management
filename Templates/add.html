@@ -1,0 +1,805 @@
+
+{% extends 'base.html' %}
+
+{% block title %}
+Add Employee
+{% endblock %}
+
+{% block content %}
+
+<style>
+
+    /* ================================
+       PAGE
+    ================================= */
+
+    .employee-container {
+        max-width: 1050px;
+        margin: 0 auto;
+        padding: 20px 15px 50px;
+    }
+
+
+    /* ================================
+       PAGE HEADER
+    ================================= */
+
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+    }
+
+    .page-header h2 {
+        margin: 0;
+        font-size: 30px;
+        font-weight: 700;
+        color: #212529;
+    }
+
+    .page-header h2 i {
+        color: #0d6efd;
+        margin-right: 8px;
+    }
+
+    .page-header p {
+        margin: 5px 0 0;
+        color: #6c757d;
+    }
+
+
+    /* ================================
+       BACK BUTTON
+    ================================= */
+
+    .back-btn {
+        display: inline-block;
+        padding: 9px 18px;
+        color: #495057;
+        background: #ffffff;
+        border: 1px solid #ced4da;
+        border-radius: 8px;
+        text-decoration: none;
+        transition: 0.3s;
+    }
+
+    .back-btn:hover {
+        color: #ffffff;
+        background: #212529;
+        border-color: #212529;
+    }
+
+
+    /* ================================
+       FORM CARD
+    ================================= */
+
+    .employee-card {
+        background: #ffffff;
+        border-radius: 15px;
+        overflow: hidden;
+        border: 1px solid #e5e7eb;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+    }
+
+
+    /* ================================
+       CARD HEADER
+    ================================= */
+
+    .employee-card-header {
+        padding: 20px 25px;
+        color: white;
+        background: linear-gradient(
+            135deg,
+            #0d6efd,
+            #084298
+        );
+    }
+
+    .employee-card-header h4 {
+        margin: 0;
+        font-size: 20px;
+        font-weight: 600;
+    }
+
+    .employee-card-header i {
+        margin-right: 8px;
+    }
+
+
+    /* ================================
+       CARD BODY
+    ================================= */
+
+    .employee-card-body {
+        padding: 30px;
+    }
+
+
+    /* ================================
+       SECTION TITLE
+    ================================= */
+
+    .section-title {
+        color: #0d6efd;
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 20px;
+    }
+
+    .section-title i {
+        margin-right: 7px;
+    }
+
+
+    /* ================================
+       FORM
+    ================================= */
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #343a40;
+    }
+
+
+    /* ================================
+       INPUT
+    ================================= */
+
+    .custom-input {
+        display: flex;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .custom-input .input-group-text {
+        min-width: 45px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: #f1f5f9;
+        color: #0d6efd;
+        border-color: #ced4da;
+    }
+
+    .custom-input .form-control,
+    .custom-input .form-select {
+        min-height: 45px;
+        border-color: #ced4da;
+    }
+
+    .custom-input .form-control:focus,
+    .custom-input .form-select:focus,
+    textarea:focus {
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 0.15rem rgba(13, 110, 253, 0.15);
+    }
+
+
+    /* ================================
+       TEXTAREA
+    ================================= */
+
+    textarea {
+        width: 100%;
+        border-radius: 8px;
+        padding: 12px;
+        resize: vertical;
+        border: 1px solid #ced4da;
+    }
+
+    .address-limit {
+        display: block;
+        margin-top: 5px;
+        color: #6c757d;
+        font-size: 13px;
+    }
+
+
+    /* ================================
+       DIVIDER
+    ================================= */
+
+    .divider {
+        height: 1px;
+        background: #e9ecef;
+        margin: 10px 0 25px;
+    }
+
+
+    /* ================================
+       BUTTONS
+    ================================= */
+
+    .form-buttons {
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+        margin-top: 30px;
+        padding-top: 20px;
+        border-top: 1px solid #e9ecef;
+    }
+
+    .cancel-btn,
+    .submit-btn {
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: 0.3s;
+    }
+
+    .cancel-btn {
+        color: #495057;
+        background: #e9ecef;
+        border: 1px solid #dee2e6;
+    }
+
+    .cancel-btn:hover {
+        background: #dee2e6;
+        color: #212529;
+    }
+
+    .submit-btn {
+        color: white;
+        background: #0d6efd;
+        border: 1px solid #0d6efd;
+    }
+
+    .submit-btn:hover {
+        background: #084298;
+        transform: translateY(-1px);
+    }
+
+
+    /* ================================
+       ERROR MESSAGE
+    ================================= */
+
+    .error-message {
+        color: #dc3545;
+        font-size: 13px;
+        margin-top: 5px;
+        display: none;
+    }
+
+    .input-error {
+        border-color: #dc3545 !important;
+    }
+
+
+    /* ================================
+       RESPONSIVE
+    ================================= */
+
+    @media (max-width: 768px) {
+
+        .page-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        .page-header h2 {
+            font-size: 25px;
+        }
+
+        .employee-card-body {
+            padding: 20px;
+        }
+
+        .form-buttons {
+            flex-direction: column;
+        }
+
+        .cancel-btn,
+        .submit-btn {
+            width: 100%;
+            text-align: center;
+        }
+    }
+
+</style>
+
+
+<div class="employee-container">
+
+    <!-- PAGE HEADER -->
+
+    <div class="page-header">
+
+        <div>
+            <h2>
+                <i class="bi bi-person-plus-fill"></i>
+                Add Employee
+            </h2>
+
+            <p>
+                Add a new employee to the company database.
+            </p>
+        </div>
+
+        <a href="{% url 'display' %}" class="back-btn">
+            <i class="bi bi-arrow-left"></i>
+            Back
+        </a>
+
+    </div>
+
+
+    <!-- FORM CARD -->
+
+    <div class="employee-card">
+
+        <div class="employee-card-header">
+
+            <h4>
+                <i class="bi bi-person-vcard"></i>
+                Employee Information
+            </h4>
+
+        </div>
+
+
+        <div class="employee-card-body">
+
+            <form
+                method="POST"
+                id="employeeForm"
+                onsubmit="return validateForm()"
+            >
+
+                {% csrf_token %}
+
+
+                <!-- PERSONAL INFORMATION -->
+
+                <div class="section-title">
+
+                    <i class="bi bi-person"></i>
+
+                    Personal Information
+
+                </div>
+
+
+                <div class="row">
+
+
+                    <!-- NAME -->
+
+                    <div class="col-md-6 form-group">
+
+                        <label>
+                            Full Name
+                        </label>
+
+                        <div class="custom-input">
+
+                            <span class="input-group-text">
+                                <i class="bi bi-person"></i>
+                            </span>
+
+                            <input
+                                type="text"
+                                name="name"
+                                id="name"
+                                class="form-control"
+                                placeholder="Enter employee name"
+                                required
+                            >
+
+                        </div>
+
+                        <div
+                            id="nameError"
+                            class="error-message"
+                        >
+                            Please enter a valid name.
+                        </div>
+
+                    </div>
+
+
+                    <!-- EMAIL -->
+
+                    <div class="col-md-6 form-group">
+
+                        <label>
+                            Email Address
+                        </label>
+
+                        <div class="custom-input">
+
+                            <span class="input-group-text">
+                                <i class="bi bi-envelope"></i>
+                            </span>
+
+                            <input
+                                type="email"
+                                name="emails"
+                                id="email"
+                                class="form-control"
+                                placeholder="example@gmail.com"
+                                required
+                            >
+
+                        </div>
+
+                        <div
+                            id="emailError"
+                            class="error-message"
+                        >
+                            Please enter a valid email.
+                        </div>
+
+                    </div>
+
+
+                    <!-- AGE -->
+
+                    <div class="col-md-6 form-group">
+
+                        <label>
+                            Age
+                        </label>
+
+                        <div class="custom-input">
+
+                            <span class="input-group-text">
+                                <i class="bi bi-calendar"></i>
+                            </span>
+
+                            <input
+                                type="number"
+                                name="age"
+                                id="age"
+                                class="form-control"
+                                placeholder="Enter age"
+                                min="18"
+                                max="100"
+                                required
+                            >
+
+                        </div>
+
+                        <div
+                            id="ageError"
+                            class="error-message"
+                        >
+                            Age must be between 18 and 100.
+                        </div>
+
+                    </div>
+
+
+                    <!-- SALARY -->
+
+                    <div class="col-md-6 form-group">
+
+                        <label>
+                            Salary
+                        </label>
+
+                        <div class="custom-input">
+
+                            <span class="input-group-text">
+                                ₹
+                            </span>
+
+                            <input
+                                type="number"
+                                name="salary"
+                                id="salary"
+                                class="form-control"
+                                placeholder="Enter salary"
+                                min="0"
+                                step="0.01"
+                                required
+                            >
+
+                        </div>
+
+                        <div
+                            id="salaryError"
+                            class="error-message"
+                        >
+                            Salary cannot be negative.
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="divider"></div>
+
+
+                <!-- WORK INFORMATION -->
+
+                <div class="section-title">
+
+                    <i class="bi bi-briefcase"></i>
+
+                    Work Information
+
+                </div>
+
+
+                <div class="row">
+
+
+                    <!-- DEPARTMENT -->
+
+                    <div class="col-md-6 form-group">
+
+                        <label>
+                            Department
+                        </label>
+
+                        <div class="custom-input">
+
+                            <span class="input-group-text">
+                                <i class="bi bi-diagram-3"></i>
+                            </span>
+
+                            <select
+                                name="department"
+                                id="department"
+                                class="form-select"
+                                required
+                            >
+
+                                <option value="">
+                                    Select Department
+                                </option>
+
+                                {% for department in departments %}
+
+                                <option value="{{ department.id }}">
+                                    {{ department.name }}
+                                </option>
+
+                                {% endfor %}
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- COMPANY -->
+
+                    <div class="col-md-6 form-group">
+
+                        <label>
+                            Company
+                        </label>
+
+                        <div class="custom-input">
+
+                            <span class="input-group-text">
+                                <i class="bi bi-building"></i>
+                            </span>
+
+                            <select
+                                name="company"
+                                id="company"
+                                class="form-select"
+                                required
+                            >
+
+                                <option value="">
+                                    Select Company
+                                </option>
+
+                                {% for company in companies %}
+
+                                <option value="{{ company.id }}">
+                                    {{ company.name }}
+                                </option>
+
+                                {% endfor %}
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- ADDRESS -->
+
+                    <div class="col-12 form-group">
+
+                        <label>
+                            Address
+                        </label>
+
+                        <textarea
+                            name="address"
+                            id="address"
+                            rows="3"
+                            maxlength="45"
+                            placeholder="Enter employee address"
+                            required
+                        ></textarea>
+
+                        <span class="address-limit">
+                            <span id="characterCount">0</span>/45 characters
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- BUTTONS -->
+
+                <div class="form-buttons">
+
+                    <a
+                        href="{% url 'display' %}"
+                        class="cancel-btn"
+                    >
+                        <i class="bi bi-x-circle"></i>
+                        Cancel
+                    </a>
+
+                    <button
+                        type="submit"
+                        class="submit-btn"
+                    >
+                        <i class="bi bi-check-circle"></i>
+                        Add Employee
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ================================
+     JAVASCRIPT
+================================= -->
+
+<script>
+
+    /* ================================
+       ADDRESS CHARACTER COUNTER
+    ================================= */
+
+    const address = document.getElementById("address");
+    const characterCount = document.getElementById("characterCount");
+
+    address.addEventListener("input", function () {
+
+        characterCount.textContent = address.value.length;
+
+    });
+
+
+    /* ================================
+       FORM VALIDATION
+    ================================= */
+
+    function validateForm() {
+
+        let valid = true;
+
+
+        const name = document.getElementById("name");
+        const email = document.getElementById("email");
+        const age = document.getElementById("age");
+        const salary = document.getElementById("salary");
+
+        const nameError = document.getElementById("nameError");
+        const emailError = document.getElementById("emailError");
+        const ageError = document.getElementById("ageError");
+        const salaryError = document.getElementById("salaryError");
+
+
+        /* Reset */
+
+        name.classList.remove("input-error");
+        email.classList.remove("input-error");
+        age.classList.remove("input-error");
+        salary.classList.remove("input-error");
+
+        nameError.style.display = "none";
+        emailError.style.display = "none";
+        ageError.style.display = "none";
+        salaryError.style.display = "none";
+
+
+        /* NAME */
+
+        const namePattern = /^[A-Za-z ]+$/;
+
+        if (!namePattern.test(name.value.trim())) {
+
+            name.classList.add("input-error");
+            nameError.style.display = "block";
+
+            valid = false;
+
+        }
+
+
+        /* EMAIL */
+
+        const emailPattern =
+            /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (!emailPattern.test(email.value.trim())) {
+
+            email.classList.add("input-error");
+            emailError.style.display = "block";
+
+            valid = false;
+
+        }
+
+
+        /* AGE */
+
+        const ageValue = Number(age.value);
+
+        if (ageValue < 18 || ageValue > 100) {
+
+            age.classList.add("input-error");
+            ageError.style.display = "block";
+
+            valid = false;
+
+        }
+
+
+        /* SALARY */
+
+        const salaryValue = Number(salary.value);
+
+        if (salaryValue < 0) {
+
+            salary.classList.add("input-error");
+            salaryError.style.display = "block";
+
+            valid = false;
+
+        }
+
+
+        /* CONFIRMATION */
+
+        if (valid) {
+
+            return confirm(
+                "Are you sure you want to add this employee?"
+            );
+
+        }
+
+
+        return false;
+
+    }
+
+</script>
+
+{% endblock %}
+
